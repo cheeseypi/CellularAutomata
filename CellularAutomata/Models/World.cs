@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace CellularAutomata.Models
@@ -6,14 +7,28 @@ namespace CellularAutomata.Models
     {
         private bool[,] Map { get; set; }
         public (int, int) Size => (Map.GetLength(0), Map.GetLength(1));
+        
+        public bool PeriodicBoundary = true;
 
         public World(int width, int height)
         {
             Map = new bool[width,height];
         }
 
-        public bool? GetState(int x, int y)
+        public bool? GetState(int xG, int yG)
         {
+            int x = xG, y = yG;
+            if (PeriodicBoundary)
+            {
+                if (x == -1)
+                    x = Size.Item1 - 1;
+                else if (x == Size.Item1)
+                    x = 0;
+                if (y == -1)
+                    y = Size.Item2 - 1;
+                else if (y == Size.Item2)
+                    y = 0;
+            }
             if (0 <= x && x < Size.Item1 && 0 <= y && y < Size.Item2)
                 return Map[x, y];
             return null;
@@ -74,19 +89,26 @@ namespace CellularAutomata.Models
             string display = "";
             for (int x = 0; x < Size.Item1; x++)
             {
-                for (int y = 0; y < Size.Item2; y++)
+                display += $"{x%10} ";
+            }
+
+            display += "\n";
+
+            for (int y = 0; y < Size.Item2; y++)
+            {
+                for (int x = 0; x < Size.Item1; x++)
                 {
                     if (GetState(x, y).Value)
                     {
-                        display += "⬛";
+                        display += "⬛ ";
                     }
                     else
                     {
-                        display += "⬜";
+                        display += "⬜ ";
                     }
                 }
 
-                display += "\n";
+                display += $" {y}\n";
             }
 
             return display;
