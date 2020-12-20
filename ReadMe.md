@@ -7,8 +7,6 @@
 3. run `dotnet build`, ensuring no errors
 4. run `dotnet run --project CellularAutomata`. The project should start up automatically
 
-## FAQ
-
 ### This output is all messed up!
 
 Because the output utilizes emoji, it can look very different between machines. If you open up
@@ -20,3 +18,8 @@ are quite small, hence they are not the default.
 
 Option 4 worked best on my linux machine, while option 1 worked best on my mac, but as long as
 your editor font matches your terminal font, you should be able to tell which will be best quickly.
+
+### Implement your own rules
+
+You can follow the model found in `CellularAutomata/Models/Rules/ConwayRuleEngine.cs`; That is, implement
+the IRuleEngine interface in a new RuleEngine file.
