@@ -98,13 +98,21 @@ namespace CellularAutomata.Models
             {
                 for (int x = 0; x < Size.Item1; x++)
                 {
-                    if (GetState(x, y).Value)
+                    if (GetState(x, y).Value) // Cell is Alive
                     {
-                        display += "⬛ ";
+                        display += "⬜"; // Option 1
+                        //display += "⬛"; // Option 2
+                        //display += "⬜ "; // Option 3
+                        //display += "⬛ "; // Option 4
+                        //display += "• "; // Option 5
                     }
-                    else
+                    else // Cell is dead
                     {
-                        display += "⬜ ";
+                        display += "⬛"; // Option 1
+                        //display += "⬜"; // Option 2
+                        //display += "⬛ "; // Option 3
+                        //display += "⬜ "; // Option 4
+                        //display += "◦ "; // Option 5
                     }
                 }
 

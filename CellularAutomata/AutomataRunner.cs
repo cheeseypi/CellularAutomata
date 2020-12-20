@@ -35,19 +35,32 @@ namespace CellularAutomata
                 new GliderCommand(),
                 new HelpCommand()
             };
+            List<string> ExitCommands = new List<string> { "q", "quit", "exit" };
 
-            while (true)
+            bool continueRunning = true;
+
+            Console.Clear();
+            while (continueRunning)
             {
                 Console.WriteLine(world.ToDisplay());
                 Console.Write("> ");
-                var commandSplit = Console.ReadLine().Split(' ');
+                var commandSplit = Console.ReadLine().Trim().Split(' ');
                 if (commandSplit.Length == 1 && commandSplit[0] == "")
                     commandSplit = new string[] { };
-                var matchingCommands = commands
-                    .Where(x =>
-                        x.RunByDefaultWithArguments.HasValue &&
-                         x.RunByDefaultWithArguments.Value == commandSplit.Length ||
-                        commandSplit.Length > 0 && x.Triggers.Contains(commandSplit[0], StringComparer.InvariantCultureIgnoreCase)).ToList();
+                if (commandSplit.Count() == 1 && ExitCommands.Any(x => commandSplit[0].Equals(x, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    continueRunning = false;
+                    continue;
+                }
+                var matchingCommands = commands.Where(x => x.RunByDefaultWithArguments.HasValue && x.RunByDefaultWithArguments.Value == commandSplit.Length).ToList();
+                if (matchingCommands.Count() == 0 && commandSplit.Length > 0)
+                    matchingCommands = commands.Where(x => x.Triggers.Contains(commandSplit[0], StringComparer.InvariantCultureIgnoreCase)).ToList();
+                //var matchingCommands = commands
+                //    .Where(x =>
+                //        x.RunByDefaultWithArguments.HasValue &&
+                //         x.RunByDefaultWithArguments.Value == commandSplit.Length ||
+                //        commandSplit.Length > 0 && x.Triggers.Contains(commandSplit[0], StringComparer.InvariantCultureIgnoreCase)).ToList();
+                Console.Clear();
                 if (matchingCommands.Any())
                 {
                     Command chosenCommand = matchingCommands.First();
