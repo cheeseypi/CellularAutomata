@@ -94,25 +94,29 @@ namespace CellularAutomata.Models
 
             display += "\n";
 
+            List<List<string>> displayOptions = new List<List<string>>
+            {
+                // Cell Display:  Alive  Dead
+                new List<string> {"1 ",  "0 " }, // Option 0 (debug)
+                new List<string> {"⬜",  "⬛" }, // Option 1
+                new List<string> {"⬛",  "⬜"},  // Option 2
+                new List<string> {"⬜ ", "⬛ "}, // Option 3
+                new List<string> {"⬛ ", "⬜ "}, // Option 4
+                new List<string> {"• ",  "◦ "}   // Option 5
+            };
+            var displayChoice = displayOptions[1];
+
             for (int y = 0; y < Size.Item2; y++)
             {
                 for (int x = 0; x < Size.Item1; x++)
                 {
                     if (GetState(x, y).Value) // Cell is Alive
                     {
-                        display += "⬜"; // Option 1
-                        //display += "⬛"; // Option 2
-                        //display += "⬜ "; // Option 3
-                        //display += "⬛ "; // Option 4
-                        //display += "• "; // Option 5
+                        display += displayChoice[0];
                     }
                     else // Cell is dead
                     {
-                        display += "⬛"; // Option 1
-                        //display += "⬜"; // Option 2
-                        //display += "⬛ "; // Option 3
-                        //display += "⬜ "; // Option 4
-                        //display += "◦ "; // Option 5
+                        display += displayChoice[1];
                     }
                 }
 
