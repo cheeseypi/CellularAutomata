@@ -2,94 +2,67 @@
 using System.Collections.Generic;
 using System.Linq;
 using CellularAutomata.Models;
+using CellularAutomata.Models.Commands;
+using CellularAutomata.Models.Rules;
 
 namespace CellularAutomata
 {
     class AutomataRunner
     {
-        public enum Command
-        {
-            BadCommand,
-            Step,
-            SetAlive,
-            SetDead,
-            Glider
-        }
+        /// <summary>
+        /// Defines initial size of the world
+        /// </summary>
+        private const int DefaultWidth = 50, DefaultHeight = 13;
+
+        /// <summary>
+        /// Defines whether to utilized periodic boundary or "All Dead" boundary
+        /// </summary>
+        private const bool PeriodicBoundary = true;
         static void Main(string[] args)
         {
-            var world = new World(50,13);
-            
+            // Instantiate a new world
+            var world = new World(DefaultWidth, DefaultHeight) {PeriodicBoundary = PeriodicBoundary};
+
+            // Define the rule engine to use
             var ruleEngine = new ConwayRuleEngine();
 
-            Dictionary<Command, List<string>> commands = new Dictionary<Command, List<string>>
+            List<Command> commands = new List<Command>
             {
-                {Command.Step, new List<string>{"", "r","run","s","step"}},
-                {Command.SetAlive, new List<string>{"sa","on", "setalive"}},
-                {Command.SetDead, new List<string>{"sd","off", "setdead"}},
-                {Command.Glider, new List<string>{"glider", "g"}},
+                new StepCommand(),
+                new ToggleCommand(),
+                new SetAliveCommand(),
+                new SetDeadCommand(),
+                new GliderCommand(),
+                new HelpCommand()
             };
 
             while (true)
             {
                 Console.WriteLine(world.ToDisplay());
-                string command = Console.ReadLine();
-                var commandSplit = command.Split(' ');
-                var chosenCommand = commands
-                    .Where(x => x.Value.Contains(commandSplit[0], StringComparer.InvariantCultureIgnoreCase))
-                    .Select(x => x.Key)
-                    .FirstOrDefault();
-                switch (chosenCommand)
+                Console.Write("> ");
+                var commandSplit = Console.ReadLine().Split(' ');
+                if (commandSplit.Length == 1 && commandSplit[0] == "")
+                    commandSplit = new string[] { };
+                var matchingCommands = commands
+                    .Where(x =>
+                        x.RunByDefaultWithArguments.HasValue &&
+                         x.RunByDefaultWithArguments.Value == commandSplit.Length ||
+                        commandSplit.Length > 0 && x.Triggers.Contains(commandSplit[0], StringComparer.InvariantCultureIgnoreCase)).ToList();
+                if (matchingCommands.Any())
                 {
-                    case Command.Step:
-                        world.SetMap(ruleEngine.ApplyRuleToWorld(world));
-                        break;
-                    case Command.SetAlive:
-                        if (commandSplit.Length == 3 && int.TryParse(commandSplit[1], out int xA) && int.TryParse(commandSplit[2], out int yA) && xA >= 0 && xA < world.Size.Item1 && yA >= 0 && yA < world.Size.Item2)
-                        {
-                            world.SetAlive(xA, yA);
-                            break;
-                        } 
+                    Command chosenCommand = matchingCommands.First();
+                    if (chosenCommand != null)
+                    {
+                        chosenCommand.ApplyCommand(world, ruleEngine, commandSplit);
+                    }
+                    else
+                    {
                         Console.WriteLine("Invalid");
-                        break;
-                    case Command.SetDead:
-                        if (commandSplit.Length == 3 && int.TryParse(commandSplit[1], out int xD) && int.TryParse(commandSplit[2], out int yD) && xD >= 0 && xD < world.Size.Item1 && yD >= 0 && yD < world.Size.Item2)
-                        {
-                            world.SetDead(xD, yD);
-                            break;
-                        } 
-                        Console.WriteLine("Invalid");
-                        break;
-                    case Command.Glider:
-                        if (commandSplit.Length == 3 && int.TryParse(commandSplit[1], out int xG) && int.TryParse(commandSplit[2], out int yG) && xG >= 0 && xG < world.Size.Item1 && yG >= 0 && yG < world.Size.Item2)
-                        {
-                            world.SetAlive(xG, yG);
-                            world.SetAlive(xG+1, yG+1);
-                            world.SetAlive(xG+2, yG+1);
-                            world.SetAlive(xG, yG+2);
-                            world.SetAlive(xG+1, yG+2);
-                            break;
-                        } 
-                        Console.WriteLine("Invalid");
-                        break;
-                        
-                    default:
-                        if (commandSplit.Length == 2 && int.TryParse(commandSplit[0], out int xT) &&
-                            int.TryParse(commandSplit[1], out int yT) && xT >= 0 && xT < world.Size.Item1 && yT >= 0 &&
-                            yT < world.Size.Item2)
-                        {
-                            if (world.GetState(xT, yT).Value)
-                            {
-                                world.SetDead(xT, yT);
-                            }
-                            else
-                            {
-                                world.SetAlive(xT, yT);
-                            }
-
-                            break;
-                        }
-                        Console.WriteLine("Bad Command");
-                        break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid");
                 }
             }
         }

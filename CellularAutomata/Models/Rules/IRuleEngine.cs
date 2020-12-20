@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CellularAutomata.Models
+namespace CellularAutomata.Models.Rules
 {
     public abstract class IRuleEngine
     {

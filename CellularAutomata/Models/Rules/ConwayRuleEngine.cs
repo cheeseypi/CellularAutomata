@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CellularAutomata.Models
+namespace CellularAutomata.Models.Rules
 {
     public class ConwayRuleEngine : IRuleEngine
     {
