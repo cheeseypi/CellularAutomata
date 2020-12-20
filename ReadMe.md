@@ -2,10 +2,11 @@
 
 ## How to run
 
-1. Download & install the **Dotnet Core 3.1 SDK** from [here](https://dotnet.microsoft.com/download)
-2. Clone this project to your local machine, and cd into the project root
-3. run `dotnet build`, ensuring no errors
-4. run `dotnet run --project CellularAutomata`. The project should start up automatically
+1. Download & install the **Dotnet Core 3.1 SDK** from [here](https://dotnet.microsoft.com/download).
+2. Clone this project to your local machine, and cd into the project root.
+3. Run `dotnet build`, ensuring no errors.
+4. Run `dotnet run --project CellularAutomata`. The project should start up automatically.
+5. Type `help` to see all the available commands.
 
 ### This output is all messed up!
 
