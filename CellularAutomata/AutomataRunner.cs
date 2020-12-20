@@ -18,6 +18,8 @@ namespace CellularAutomata
         /// Defines whether to utilized periodic boundary or "All Dead" boundary
         /// </summary>
         private const bool PeriodicBoundary = true;
+
+
         static void Main(string[] args)
         {
             // Instantiate a new world
